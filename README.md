@@ -10,10 +10,10 @@
 > Putting Age Verification in Context: Promise, Burden, and the Case for Sound Governance
 
 **[Try the Interactive Explorer](https://civic-interconnect.github.io/explorer-age-verification/explorer/)**
-To accept the example data and see the results, click the green "Evaluate" button in the lower right-hand corner of either:
+To accept the example data and see the results, click the colorful "Evaluate" button in the lower right-hand corner of either:
 
 - Policy (TOML)
-- Candidates data (CSV)
+- Candidate data (CSV)
 
 ![View Results](./docs/images/view-results.png)
 

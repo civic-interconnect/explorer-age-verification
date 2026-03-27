@@ -414,11 +414,11 @@ textarea.editor:focus {
 }
 
 .dot-medium {
-  background: #b26a00; /* amber */
+  background: #fdf039; /* amber */
 }
 
 .dot-high {
-  background: #8b2020; /* red */
+  background: #f03838; /* red */
 }
 .detail-panel {
   margin-top: 1.25rem;
@@ -434,9 +434,9 @@ textarea.editor:focus {
   border-bottom: none;
 }
 .crit-icon {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  min-width: 60px;        /* was 18px — too small for words */
+  height: auto;           /* allow text */
+  border-radius: 4px;     /* not a circle anymore */
   flex-shrink: 0;
   display: flex;
   align-items: center;

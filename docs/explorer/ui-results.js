@@ -1,8 +1,10 @@
 // docs/explorer/ui-results.js
 
 function runAndGoResults() {
-  state.csv = document.getElementById("csv-editor").value || state.csv || DEFAULT_CSV;
-  state.toml = document.getElementById("toml-editor").value || state.toml || DEFAULT_TOML;
+  state.csv =
+    document.getElementById("csv-editor").value || state.csv || DEFAULT_CSV;
+  state.toml =
+    document.getElementById("toml-editor").value || state.toml || DEFAULT_TOML;
   switchTab("results");
 }
 
@@ -59,28 +61,31 @@ function renderResults() {
             <thead>
               <tr><th>ID</th><th>Candidate</th><th>Scores</th></tr>
             </thead>
-<tbody>
-  ${results
-      .map(
-        (r) => `
-        <tr class="${r.candidate_id === detailId ? "selected" : ""}" onclick="selectCandidate('${r.candidate_id}')">
-          <td style="font-family:var(--mono);font-size:12px;color:var(--text-faint)">${r.candidate_id}</td>
-          <td>${r.candidate_name}</td>
-          <td>
-            <div class="dots">
-              ${Object.entries(r.levels)
-            .map(
-              ([k, level]) =>
-                `<div class="dot dot-${level}" title="${k.replace(/_/g, " ")}: ${level}"></div>`
-            )
-            .join("")}
-            </div>
-          </td>
-        </tr>
-      `
-      )
-      .join("")}
-</tbody>
+
+            <tbody>
+              ${results
+                .map((r) => {
+                  const dots = Object.entries(r.visualLevels)
+                    .map(
+                      ([k, v]) =>
+                        `<div class="dot dot-${v}" title="${k.replace(/_/g, " ")}: ${r.levels[k]}"></div>`,
+                    )
+                    .join("");
+
+                  return `
+                  <tr class="${r.candidate_id === detailId ? "selected" : ""}" onclick="selectCandidate('${r.candidate_id}')">
+                    <td style="font-family:var(--mono);font-size:12px;color:var(--text-faint)">${r.candidate_id}</td>
+                    <td>${r.candidate_name}</td>
+                    <td>
+                      <div class="dots">
+                        ${dots}
+                      </div>
+                    </td>
+                  </tr>
+                `;
+                })
+                .join("")}
+            </tbody>
           </table>
         </div>
       </div>
@@ -88,29 +93,33 @@ function renderResults() {
       <div class="card">
         <div class="card-head">
           <span class="card-title">
-            ${detailCandidate
-      ? detailCandidate.candidate_name + " — " + detailCandidate.candidate_id
-      : "Score detail"
-    }
+            ${
+              detailCandidate
+                ? detailCandidate.candidate_name +
+                  " — " +
+                  detailCandidate.candidate_id
+                : "Score detail"
+            }
           </span>
         </div>
         <div class="card-body">
-          ${detailCandidate
-      ? Object.entries(detailCandidate.scores)
-        .map(
-          ([k, v]) => `
+          ${
+            detailCandidate
+              ? Object.entries(detailCandidate.scores)
+                  .map(
+                    ([k, v]) => `
                       <div class="crit-row">
-                        <div class="crit-icon">${detailCandidate.levels[k]}</div>
+                        <div class="crit-icon">${detailCandidate.visualLevels[k]}</div>
                         <div>
                           <div class="crit-key">${k.replace(/_/g, " ")}</div>
                           <div class="crit-msg">Score: ${v.toFixed(2)}</div>
                         </div>
                       </div>
-                    `
-        )
-        .join("")
-      : '<p style="color:var(--text-faint);font-size:12px;font-family:var(--mono)">← Select a candidate to see scores</p>'
-    }
+                    `,
+                  )
+                  .join("")
+              : '<p style="color:var(--text-faint);font-size:12px;font-family:var(--mono)">← Select a candidate to see scores</p>'
+          }
         </div>
       </div>
     </div>
