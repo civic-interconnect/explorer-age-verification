@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorer: Age Verification</title>
+  <meta name="description"
+    content="Interactive decision explorer for evaluating data center site suitability and governance tradeoffs.">
+  <meta name="theme-color" content="#4b2e83">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="images/favicon_io/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon_io/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="images/favicon_io/apple-touch-icon.png">
+  <link rel="manifest" href="images/favicon_io/site.webmanifest">
+  <script type="module">
+    import * as jtoml from "https://cdn.jsdelivr.net/npm/@ltd/j-toml@1.38.0/index.mjs";
+    window.jtoml = jtoml;
+    loadDefaults();
+    switchTab("results");
+  </script>
+
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Explorer <span>/</span> Age Verification</div>
+
+    <div class="header-right">
+      <div class="header-status" id="hdr-status">no data loaded</div>
+
+      <a href="https://github.com/civic-interconnect/explorer-age-verification" target="_blank" rel="noopener"
+        class="github-link" title="View on GitHub" aria-label="View project on GitHub">
+        <svg viewBox="0 0 512 512" aria-hidden="true">
+          <path
+            d="M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8z" />
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('load')">Load Files</div>
+    <div class="tab" onclick="switchTab('edit-p')">Edit Policy</div>
+    <div class="tab" onclick="switchTab('edit-s')">Edit Candidates</div>
+    <div class="tab" onclick="switchTab('results')">View Results</div>
+  </div>
+
+  <!-- LOAD PAGE -->
+  <div id="page-load" class="page active">
+    <div class="grid-2">
+      <div>
+        <div class="card section-gap">
+          <div class="card-head"><span class="card-title">Load Policy (TOML)</span><span id="toml-status-badge"></span>
+          </div>
+          <div class="card-body">
+            <div class="load-section">
+              <h3>Upload file</h3>
+              <div class="drop-zone" id="toml-drop" onclick="document.getElementById('toml-file').click()"
+                ondragover="doDragOver(event,'toml-drop')" ondragleave="doDragLeave('toml-drop')"
+                ondrop="doDrop(event,'toml')">
+                <input type="file" id="toml-file" accept=".toml,.txt" onchange="handleFileUpload(event,'toml')">
+                <div class="drop-label">Drop file here or <strong>browse</strong></div>
+                <div class="drop-badge">.toml</div>
+              </div>
+            </div>
+            <div class="load-section">
+              <h3>Load from GitHub raw URL</h3>
+              <div class="url-row">
+                <input type="text" id="toml-url" placeholder="https://raw.githubusercontent.com/…/policy.toml">
+                <button class="btn btn-sm" onclick="fetchFromUrl('toml')">Fetch</button>
+              </div>
+            </div>
+            <div id="toml-msg"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card section-gap">
+          <div class="card-head"><span class="card-title">Load Sites (CSV)</span><span id="csv-status-badge"></span>
+          </div>
+          <div class="card-body">
+            <div class="load-section">
+              <h3>Upload file</h3>
+              <div class="drop-zone" id="csv-drop" onclick="document.getElementById('csv-file').click()"
+                ondragover="doDragOver(event,'csv-drop')" ondragleave="doDragLeave('csv-drop')"
+                ondrop="doDrop(event,'csv')">
+                <input type="file" id="csv-file" accept=".csv" onchange="handleFileUpload(event,'csv')">
+                <div class="drop-label">Drop file here or <strong>browse</strong></div>
+                <div class="drop-badge">.csv</div>
+              </div>
+            </div>
+            <div class="load-section">
+              <h3>Load from GitHub raw URL</h3>
+              <div class="url-row">
+                <input type="text" id="csv-url" placeholder="https://raw.githubusercontent.com/…/candidates.csv">
+                <button class="btn btn-sm" onclick="fetchFromUrl('csv')">Fetch</button>
+              </div>
+            </div>
+            <div id="csv-msg"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <button class="btn btn-accent" onclick="loadDefaults()">Load example data</button>
+      <span style="font-size:12px;color:var(--text-faint);font-family:var(--mono)">or load your own files above then go
+        to Edit → Results</span>
+    </div>
+  </div>
+
+  <!-- EDIT POLICY PAGE -->
+  <div id="page-edit-p" class="page">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Policy (TOML)</span>
+      </div>
+      <div class="card-body">
+        <div id="toml-parse-err"></div>
+        <div class="editor-wrap">
+          <textarea class="editor" id="toml-editor" spellcheck="false" oninput="onEditorChange('toml')"></textarea>
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-sm" onclick="downloadFile('toml')">
+            ↓ Download TOML
+          </button>
+          <button class="btn btn-sm btn-accent" onclick="runAndGoResults()">
+            Evaluate →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT CANDIDATES PAGE -->
+  <div id="page-edit-s" class="page">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Candidates (CSV)</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-faint)" id="csv-rows-label"></span>
+          <button class="btn btn-sm" onclick="addCsvRow()">+ row</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="csv-parse-err"></div>
+
+        <div class="card section-gap" style="margin-bottom:1rem">
+          <div class="card-head">
+            <span class="card-title">Selected Candidate</span>
+            <div style="display:flex;gap:.5rem;align-items:center">
+              <button class="btn btn-sm" type="button" onclick="selectPrevCsvRow()">← Prev</button>
+              <button class="btn btn-sm" type="button" onclick="selectNextCsvRow()">Next →</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:.75rem">
+              <label
+                style="display:block;font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-bottom:.35rem">
+                Candidate row
+              </label>
+              <select id="csv-row-select" onchange="onCsvRowSelectChange()"
+                style="width:100%;font-family:var(--mono);font-size:12px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#fafaf8">
+              </select>
+            </div>
+
+            <div id="csv-row-form" class="form-grid"></div>
+          </div>
+        </div>
+
+        <div class="editor-wrap">
+          <div class="editor-readonly-note" id="csv-readonly-note">
+            Raw CSV is shown for transparency. Use the candidate helper above to edit safely.
+          </div>
+          <textarea class="editor editor-ghosted" id="csv-editor" spellcheck="false" oninput="onEditorChange('csv')"
+            readonly></textarea>
+        </div>
+
+        <div class="editor-actions">
+          <button class="btn btn-sm" type="button" onclick="toggleRawCsvEdit()" id="csv-toggle-btn">
+            Unlock Raw CSV
+          </button>
+          <button class="btn btn-sm" onclick="downloadFile('csv')">
+            ↓ Download CSV
+          </button>
+          <button class="btn btn-sm btn-accent" onclick="runAndGoResults()">
+            Evaluate →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS PAGE -->
+  <div id="page-results" class="page">
+    <div id="results-content">
+      <p style="color:var(--text-faint);font-family:var(--mono);font-size:12px">Load data first, then run evaluation.
+      </p>
+    </div>
+  </div>
+  <script src="./state.js"></script>
+  <script src="./data-csv.js"></script>
+  <script src="./data-toml.js"></script>
+  <script src="./evaluator.js"></script>
+  <script src="./ui-tabs.js"></script>
+  <script src="./ui-load.js"></script>
+  <script src="./ui-editors.js"></script>
+  <script src="./ui-results.js"></script>
+  <script src="./app.js"></script>
+
+</body>
+
+</html>
