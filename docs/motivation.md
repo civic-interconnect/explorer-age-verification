@@ -1,32 +1,15 @@
-# Motivation
+## Motivation
 
-Data centers are expanding because societies are choosing digital systems for:
+Age verification is often framed as a binary choice: strong protection versus privacy.
+But real-world designs involve structured tradeoffs across multiple dimensions.
 
-- communication
-- commerce
-- research
-- logistics
-- cloud services
-- artificial intelligence
+Different approaches distribute costs, risks, and benefits differently across
+individuals, platforms, and institutions.
 
-That expansion creates opportunities to enhance:
+This project provides an **inspectable framework for exploring tradeoffs**.
 
-- computation
-- storage
-- coordination
-- scientific work
-- productivity gains
-- potentially system-level efficiencies in other domains
+By making assumptions explicit and configurable,
+it enables comparison of alternative designs across dimensions
+such as **minor protection, privacy exposure, surveillance risk, and implementation complexity**.
 
-At the same time, concentration of load has made data centers
-newly visible as a public issue because they can:
-
-- stress local power systems
-- draw water
-- change land use
-- create noise
-- shift cost and benefit distributions
-
-The right question is not whether data centers are inherently good or bad, but:
-**how to place them within a broader sustainable infrastructure strategy**
-alongside transportation, buildings, industry, agriculture, and consumer consumption.
+The goal is to support **informed reasoning** regarding different policy and design choices.

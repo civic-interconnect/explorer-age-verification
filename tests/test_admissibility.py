@@ -1,10 +1,9 @@
 """Tests for admissibility evaluation."""
 
+from explorer_age_verification.domain.candidates import ExampleCandidate
 from explorer_age_verification.evaluation.admissibility import (
     evaluate_site_admissibility,
 )
-
-from explorer_age_verification.domain.candidates import ExampleCandidate
 from explorer_age_verification.policy.example import ExamplePolicy
 
 
